@@ -8,13 +8,15 @@ class Luas(object):
         self.url = 'https://luasforecasts.rpa.ie/xml/get.ashx'
         self.stop_info_json = luas_stops.stops['stations']
         self.stop_abbreviation = self.stop_names_abbreviation(stop.lower())
-        self.response = self.stop_request_content
+        self.response = self.request_stop_info
+        self.response_content = self.stop_request_content
 
     def stop_names_abbreviation(self, stop):
         for stop_info in self.stop_info_json:
             if stop in stop_info['displayName'].lower():
                 return stop_info['shortName']
 
+    @property
     def request_stop_info(self):
         params = {
             'stop': self.stop_abbreviation,
@@ -25,41 +27,50 @@ class Luas(object):
 
     @property
     def stop_request_content(self):
-        xml_text = self.request_stop_info().text
+        xml_text = self.response.text
         return xmltodict.parse(xml_text)
 
     @property
     def time_of_request(self):
-        return self.response['stopInfo']['@created']
+        return self.response_content['stopInfo']['@created']
 
     @property
     def stop(self):
-        return self.response['stopInfo']['@stop']
+        return self.response_content['stopInfo']['@stop']
 
     @property
     def message(self):
-        return self.response['stopInfo']['message']
+        return self.response_content['stopInfo']['message']
 
     @property
     def trams_inbound(self):
-        return self.response['stopInfo']['direction'][0]['tram']
+        return self.response_content['stopInfo']['direction'][0]['tram']
 
     @property
     def trams_outbound(self):
-        return self.response['stopInfo']['direction'][1]['tram']
+        return self.response_content['stopInfo']['direction'][1]['tram']
 
+    @property
     def print_schedule(self):
-        print(self.stop)
-        print(self.message + "\n")
+        message = '{}\n{}\n'.format(self.stop, self.message)
 
-        print('Inbound')
+        message += '\n==============================\n'
+        message += 'Inbound'
+        message += '\n==============================\n'
         for luas in self.trams_inbound:
-            print(luas['@destination'] + ' - ' + luas['@dueMins'])
+            if len(luas) > 1:
+                message += '{} - {}\n'.format(luas['@destination'], luas['@dueMins'])
+            else:
+                message += '{} - {}\n'.format(self.trams_inbound['@destination'], self.trams_inbound['@dueMins'])
 
-        print('\nOutbound')
+        message += '\n==============================\n'
+        message += 'Outbound'
+        message += '\n==============================\n'
         for luas in self.trams_outbound:
-            print(luas['@destination'] + ' - ' + luas['@dueMins'])
+            message += '{} - {}\n'.format(luas['@destination'], luas['@dueMins'])
+        return message
 
 
-rti = Luas('harcourt')
-rti.print_schedule()
+if __name__ == '__main__':
+    rti = Luas('central park')
+    print(rti.print_schedule)
