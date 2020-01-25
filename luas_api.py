@@ -51,7 +51,7 @@ class Luas(object):
         return self.response_content['stopInfo']['direction'][1]['tram']
 
     @property
-    def print_schedule(self):
+    def schedule(self):
         message = '{}\n{}\n'.format(self.stop, self.message)
 
         message += '\n==============================\n'
@@ -73,4 +73,4 @@ class Luas(object):
 
 if __name__ == '__main__':
     rti = Luas('central park')
-    print(rti.print_schedule)
+    print(rti.schedule)
