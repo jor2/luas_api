@@ -58,10 +58,11 @@ class Luas(object):
         message += 'Inbound'
         message += '\n==============================\n'
         for luas in self.trams_inbound:
-            if len(luas) > 1:
-                message += '{} - {}\n'.format(luas['@destination'], luas['@dueMins'])
-            else:
-                message += '{} - {}\n'.format(self.trams_inbound['@destination'], self.trams_inbound['@dueMins'])
+            if len(self.trams_inbound) > 1:
+                try:
+                    message += '{} - {}\n'.format(luas['@destination'], luas['@dueMins'])
+                except AttributeError:
+                    message += '{} - {}\n'.format(self.trams_inbound['@destination'], self.trams_inbound['@dueMins'])
 
         message += '\n==============================\n'
         message += 'Outbound'
@@ -72,5 +73,5 @@ class Luas(object):
 
 
 if __name__ == '__main__':
-    rti = Luas('central park')
+    rti = Luas('central')
     print(rti.schedule)
