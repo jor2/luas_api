@@ -75,5 +75,5 @@ class Luas(object):
 
 
 if __name__ == '__main__':
-    rti = Luas('centra')
+    rti = Luas('central park')
     print(rti.schedule)
