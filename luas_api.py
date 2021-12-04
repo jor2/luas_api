@@ -10,6 +10,10 @@ class Luas(object):
         self.stop_abbreviation = self.stop_names_abbreviation(stop.lower())
         self.response = self.request_stop_info
         self.response_content = self.stop_request_content
+        self.mapping = {
+            "Inbound": self.trams_inbound,
+            "Outbound": self.trams_outbound
+        }
 
     def stop_names_abbreviation(self, stop):
         for stop_info in self.stop_info_json:
@@ -53,25 +57,23 @@ class Luas(object):
     @property
     def schedule(self):
         message = '{}\n{}\n'.format(self.stop, self.message)
+        message = self.direction_trams_message("Inbound", message)
+        message = self.direction_trams_message("Outbound", message)
+        return message
 
+    def direction_trams_message(self, direction, message):
         message += '\n==============================\n'
-        message += 'Inbound'
+        message += f'{direction}'
         message += '\n==============================\n'
-        for luas in self.trams_inbound:
-            if len(self.trams_inbound) > 1:
+        for luas in self.mapping[direction]:
+            if len(self.mapping[direction]) > 1:
                 try:
                     message += '{} - {}\n'.format(luas['@destination'], luas['@dueMins'])
                 except AttributeError:
-                    message += '{} - {}\n'.format(self.trams_inbound['@destination'], self.trams_inbound['@dueMins'])
-
-        message += '\n==============================\n'
-        message += 'Outbound'
-        message += '\n==============================\n'
-        for luas in self.trams_outbound:
-            message += '{} - {}\n'.format(luas['@destination'], luas['@dueMins'])
+                    message += '{} - {}\n'.format(self.mapping[direction]['@destination'], self.mapping[direction]['@dueMins'])
         return message
 
 
 if __name__ == '__main__':
-    rti = Luas('central')
+    rti = Luas('centra')
     print(rti.schedule)
