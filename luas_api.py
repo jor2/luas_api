@@ -66,15 +66,14 @@ class Luas(object):
         message += f'{direction}'
         message += '\n==============================\n'
         for luas in self.mapping[direction]:
-            if len(self.mapping[direction]) > 1:
-                try:
-                    message += '{} - {}\n'.format(luas['@destination'], luas['@dueMins'])
-                except TypeError:
-                    message += '{} - {}\n'.format(self.mapping[direction]['@destination'], self.mapping[direction]['@dueMins'])
-                    return message
+            try:
+                message += '{} - {}\n'.format(luas['@destination'], luas['@dueMins'])
+            except TypeError:
+                message += '{} - {}\n'.format(self.mapping[direction]['@destination'], self.mapping[direction]['@dueMins'])
+                return message
         return message
 
 
 if __name__ == '__main__':
-    rti = Luas('central park')
+    rti = Luas('central pa')
     print(rti.schedule)
