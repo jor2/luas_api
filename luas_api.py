@@ -69,7 +69,7 @@ class Luas(object):
             if len(self.mapping[direction]) > 1:
                 try:
                     message += '{} - {}\n'.format(luas['@destination'], luas['@dueMins'])
-                except AttributeError:
+                except TypeError:
                     message += '{} - {}\n'.format(self.mapping[direction]['@destination'], self.mapping[direction]['@dueMins'])
         return message
 
