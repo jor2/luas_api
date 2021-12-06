@@ -69,11 +69,19 @@ class Luas(object):
             try:
                 message += '{} - {}\n'.format(luas['@destination'], luas['@dueMins'])
             except TypeError:
-                message += '{} - {}\n'.format(self.mapping[direction]['@destination'], self.mapping[direction]['@dueMins'])
+                if self.mapping[direction]['@dueMins'] == '':
+                    message += '{}\n'.format(
+                        self.mapping[direction]['@destination']
+                    )
+                else:
+                    message += '{} - {}\n'.format(
+                        self.mapping[direction]['@destination'],
+                        self.mapping[direction]['@dueMins']
+                    )
                 return message
         return message
 
 
 if __name__ == '__main__':
-    rti = Luas('central pa')
+    rti = Luas('central park')
     print(rti.schedule)
